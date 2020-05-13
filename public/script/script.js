@@ -1,8 +1,12 @@
 "use strict";
 
 (function() {
+
 	document.addEventListener('DOMContentLoaded', () => {
 		console.log('DOMContentLoaded');
+
+		// aos - animate
+		AOS.init();
 
 		const _colors = {
 			red: 'rgb(255, 99, 132)',
@@ -170,5 +174,6 @@
 			},
 			options: _opMagnitude
 		});
+		
 	});
 }());
