@@ -13,7 +13,7 @@
 			purple: 'rgb(153, 102, 255)',
 			grey: 'rgb(201, 203, 207)'
 		};
-
+		
 		const figureOne = document.querySelector('#figure-one').getContext('2d');
 		const figureTwo = document.querySelector('#figure-two').getContext('2d');
 		const figureThree = document.querySelector('#figure-three').getContext('2d');
@@ -77,7 +77,6 @@
 						data: [40, 40, 40, 40, 40, 40, 40, 40],
 						fill: false,
 						borderColor: _colors.purple,
-						// lineTension: 0.3
 					}
 				]
 			},
@@ -100,7 +99,6 @@
 						data: [-60, -40, -20, 0, 20, 40, 60, 80],
 						fill: false,
 						borderColor: _colors.purple,
-						// lineTension: 0.3
 					}
 				]
 			},
@@ -123,7 +121,6 @@
 						data: [60, 40, 20, 0, -20, -40, -60, -80],
 						fill: false,
 						borderColor: _colors.purple,
-						// lineTension: 0.3
 					}
 				]
 			},
@@ -146,7 +143,6 @@
 						data: [0, 0, 0, 5, 20, 40, 60, 80],
 						fill: false,
 						borderColor: _colors.purple,
-						// lineTension: 0.3
 					}
 				]
 			},
@@ -169,7 +165,6 @@
 						data: [0, 0, 0, -5, -20, -40, -60, -80],
 						fill: false,
 						borderColor: _colors.purple,
-						// lineTension: 0.3
 					}
 				]
 			},
