@@ -1,3 +1,36 @@
 html {
 	scroll-behavior: smooth;
 }
+.existing-plots {
+	min-height: 70vh;
+}
+/*
+canvas {
+	min-width: 40vw;
+	height: 70vh;
+}
+*/
+.calculated-graph, .new-button, .form-formula {
+	transition: transform .8s;
+}
+.hide-view {
+	transform: scale(0);
+}
+.reveale-view {
+	transform: scale(1);
+}
+
+.alert {
+	position: relative;
+	padding: .75rem 1.25rem;
+	margin-bottom: 1rem;
+	border: 1px solid transparent;
+	border-radius: .25rem;
+	max-width: 500px;
+	transition: transform .4s;
+}
+.alert-danger {
+	color: #721c24;
+	background-color: #f8d7da;
+	border-color: #f5c6cb;
+}

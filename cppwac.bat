@@ -1,0 +1,1 @@
+emcc -s WASM=1 -o public/script/bode.js cpp/bode.cpp -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap', 'stringToUTF8']" --bind
