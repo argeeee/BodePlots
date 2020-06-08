@@ -155,9 +155,11 @@
 					<canvas class="h-64" id="plot-c"></canvas>
 				</div>
 				<div class="right-flex flex flex-col-reverse lg:flex-col justify-between p-2">
-					<p class="text-gray-600 text-xl">G(s) = 1/(1 + s)</p>
+					<div class="flex flex-row text-gray-600 text-xl">
+						G(s)= <p class="text-gray-600 text-xl" id="f-text"></p> 
+					</div>
 					<div class="flex flex-row lg:flex-col text-2xl justify-start lg:justify-end">
-						<div class="flex flex-row justify-start lg:justify-end">
+						<div class="button-wrapper flex flex-row justify-start lg:justify-end">
 							<button class="calculated-module-button border-teal-400 border-b-2 px-3">Module</button>
 							<button class="calculated-phase-button text-white bg-teal-400 px-3">Phase</button>
 						</div>

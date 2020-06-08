@@ -1,13 +1,41 @@
 "use strict";
 
 (function() {
-
+	
 	/***********************************************************************************************
-	 * Bode
+	 * Global functions
 	 */
-	function CalculateBode(text) {
-		const { Bode } = Module;
-		return new Bode(text).getSolution().split(" ");
+	
+	function _hide(e) {
+		e.classList.remove('reveale-view');
+		e.classList.add('hide-view');
+	}
+
+	function _reveal(e) {
+		e.classList.remove('hide-view');
+		e.classList.add('reveale-view');
+	}
+
+	function printErrors(errors) {
+		errorList.innerHTML = '';
+
+		errors.forEach((error, i) => {
+			const e = document.createElement('div');
+			e.className = 'alert alert-danger hide-view';
+			e.innerText = error;
+			errorList.appendChild(e);
+			
+			setTimeout(() => {
+				_reveal(e);
+			}, 100 + 30 * i);
+		});
+	}
+	window.printErrors = printErrors;
+
+	function calculatePlot(text) {
+		const { CalculatePlot } = Module;
+		CalculatePlot(text);
+		// revealCalculated();
 	}
 
 	/***********************************************************************************************
@@ -60,16 +88,6 @@
 
 	function generateFormListeners() {
 
-		function _hide(e) {
-			e.classList.remove('reveale-view');
-			e.classList.add('hide-view');
-		}
-
-		function _reveal(e) {
-			e.classList.remove('hide-view');
-			e.classList.add('reveale-view');
-		}
-
 		const generateButton = document.querySelector('#generate-button');
 		const newButton = document.querySelector('#new-button');
 		
@@ -82,48 +100,24 @@
 		const calculated = document.querySelector('.calculated-graph');
 		calculated.classList.add('hide-view');
 
-		generateButton.addEventListener('click', () => {
-			/**
-			 * Try generate
-			 */
-			const text = document.getElementById("function-input").value;
-			console.log(text);
+		function revealCalculated() {
+			_reveal(calculated);
+			_reveal(newView);
+			_hide(formView);
+		}
+		window.revealCalculated = revealCalculated;
 
-			const result = CalculateBode(text);
-			console.log(result);
-			
-			const errorList = document.querySelector('#error-list');
+		generateButton.addEventListener('click', () => {
+
+			const text = document.getElementById("function-input").value;
 			errorList.innerHTML = '';
 			
-			let succsess = text.length;
-			let errors = [
-				"The function can not be empty.",
- 			];
-
-			/**
-			 * if succsess
-			 */
-			if (succsess) {
-				_reveal(calculated);
-				_reveal(newView);
-				_hide(formView);
-			}
-			/**
-			 * else print errors
-			 */
-			else {
-				errors.forEach((error, i) => {
-					const e = document.createElement('div');
-					e.className = 'alert alert-danger hide-view';
-					e.innerText = error;
-					errorList.appendChild(e);
-					
-					setTimeout(() => {
-						_reveal(e);
-					}, 100 + 30 * i);
-				});
-			}
-			
+			if (text.length) 
+				calculatePlot(text);
+			else 
+				printErrors([
+					"The function can not be empty.",
+				]);
 		});
 
 		newButton.addEventListener('click', () => {
@@ -134,23 +128,50 @@
 
 	}
 
-	function generateCalculatedPlotListeners() {
+	function GenerateCalculatedPlotListeners(moduleData, phaseData) {
+		
+		console.log(moduleData, phaseData);
+		
+		const wrapper = document.querySelector('.button-wrapper');
+		wrapper.innerHTML = '';
+
+		(function() {
+			const moduleB = document.createElement('button')
+			moduleB.className = 'calculated-module-button ';
+			moduleB.innerText = 'Module';
+
+			const phaseB = document.createElement('button')
+			phaseB.className = 'calculated-phase-button ';
+			phaseB.innerText = 'Phase';
+
+			wrapper.appendChild(moduleB);
+			wrapper.appendChild(phaseB);
+		}());
+
 		const moduleB = document.querySelector('.calculated-module-button');
 		const phaseB = document.querySelector('.calculated-phase-button');
 
 		const activeStyle = 'border-teal-400 border-b-2 px-3';
 		const notActiveStyle = 'text-white bg-teal-400 px-3';
 
-		const moduleData = undefined;
-		const phaseData = undefined;
+		moduleB.className += activeStyle;
+		phaseB.className += notActiveStyle;
 
-		const _labels = [-3, -2, -1, 0, 1, 2, 3, 4];
+		const _labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 		const chart = new Chart(document.querySelector('#plot-c').getContext('2d'), {
 			type: 'line',
 			data: {
 				labels: _labels,
-				datasets: undefined
+				datasets: [
+					{
+						label: "Real Plot",
+						data: moduleData,
+						fill: false,
+						borderColor: 'rgb(54, 162, 235)',
+						lineTension: 1
+					}
+				]
 			},
 			options: Options._opModule
 		});
@@ -159,18 +180,34 @@
 			phaseB.className = notActiveStyle;
 			moduleB.className = activeStyle;
 
-			// chart.data.datasets = moduleData;
-			// chart.options = Options._opModule;
-			// chart.update();
+			chart.data.datasets = [
+				{
+					label: "Real Plot",
+					data: moduleData,
+					fill: false,
+					borderColor: 'rgb(54, 162, 235)',
+					lineTension: 0.2
+				}
+			];
+			chart.options = Options._opModule;
+			chart.update();
 		});
 
 		phaseB.addEventListener('click', () => {
 			phaseB.className = activeStyle;
 			moduleB.className = notActiveStyle;
 			
-			// chart.data.datasets = phaseData;
-			// chart.options = Options._opPhase;
-			// chart.update();
+			chart.data.datasets = [
+				{
+					label: "Real Plot",
+					data: phaseData,
+					fill: false,
+					borderColor: 'rgb(54, 162, 235)',
+					lineTension: 0.2
+				}
+			];
+			chart.options = Options._opPhase;
+			chart.update();
 		});
 		
 		// download
@@ -179,11 +216,11 @@
 
 		});
 	}
+	window.GenerateCalculatedPlotListeners = GenerateCalculatedPlotListeners;
 
 	function generateListeners() {
 		generateModulePhaseButtonsListeners();
 		generateFormListeners();
-		generateCalculatedPlotListeners();
 	}
 
 
@@ -192,7 +229,8 @@
 	 */
 	document.addEventListener('DOMContentLoaded', () => {
 		console.log('DOMContentLoaded');
-
+		const errorList = document.querySelector('#error-list');
+		window.errorList = errorList;
 		// aos - animate
 		AOS.init();
 
