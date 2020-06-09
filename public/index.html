@@ -10,6 +10,8 @@
 	<link rel="stylesheet" href="./styles/aos.min.css">
 	<link rel="stylesheet" href="./styles/style.css">
 
+	<link rel="manifest" href="./manifest.webmanifest">
+
 	<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>-->
 	<!-- <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>-->
 	<script src="./script/chart.min.js"></script>
@@ -35,7 +37,7 @@
 			<div class="p-0 md:p-24">
 				<div class="text-content">
 					<h1 class="text-5xl md:text-6xl font-bold text-teal-400">Create Bode diagrams</h1>
-					<p class="text-3xl text-gray-600 max-w-xl">This site create for you a Bode diagram by passing a transfer function G(jω)</p>
+					<p class="text-3xl text-gray-600 max-w-xl">This site creates for you a Bode diagram with a transfer function G(jω) in input</p>
 				</div>
 				<div class="w-full flex flex-row-reverse mt-24 mb-10 md:mb-0">
 					<a href="#formc" class="bg-teal-400 hover:bg-teal-500 text-white font-bold text-4xl py-2 px-6 rounded-lg shadow-xl">Create new</a>
@@ -132,7 +134,7 @@
 		</div>
 		<!-- form creator -->
 		<div id="formc" class="px-4 md:px-24 py-4 mt-6 min-h-screen">
-			<div  id="calculate-view">
+			<div  id="calculate-view" class="h-auto">
 				<div class="flex flex-col md:flex-row justify-between items-center">
 					<h1 class="text-5xl md:text-6xl font-bold text-teal-400">Let's start</h1>
 					<div class="p-auto new-button">
@@ -151,19 +153,19 @@
 				</div>
 			</div>
 			<div class="calculated-graph flex flex-col lg:flex-row items-stretch justify-between">
-				<div class="left-side-graph">
+				<div class="left-side-graph" id="plot-container">
 					<canvas class="h-64" id="plot-c"></canvas>
 				</div>
 				<div class="right-flex flex flex-col-reverse lg:flex-col justify-between p-2">
 					<div class="flex flex-row text-gray-600 text-xl">
 						G(s)= <p class="text-gray-600 text-xl" id="f-text"></p> 
 					</div>
-					<div class="flex flex-row lg:flex-col text-2xl justify-start lg:justify-end">
+					<div class="flex flex-col text-2xl justify-start lg:justify-end">
 						<div class="button-wrapper flex flex-row justify-start lg:justify-end">
 							<button class="calculated-module-button border-teal-400 border-b-2 px-3">Module</button>
 							<button class="calculated-phase-button text-white bg-teal-400 px-3">Phase</button>
 						</div>
-						<button class="text-white bg-teal-400 px-3 ml-4 lg:ml-0 lg:mt-4" id="download-button">Download</button>
+						<button class="text-white bg-teal-400 px-3 ml-0 mt-4" id="download-button">Download</button>
 					</div>
 				</div>
 			</div>

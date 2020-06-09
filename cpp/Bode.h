@@ -1,4 +1,3 @@
-#pragma GCC optimize("Ofast")
 
 #include <iostream>
 #include <sstream>
@@ -15,8 +14,8 @@ namespace bode {
 		using Ptr = shared_ptr<_Tp>;
 	
 	template<typename _Tp, typename... _Args>
-    inline shared_ptr<_Tp>
-    New(_Args&&... __args)
+		inline shared_ptr<_Tp>
+		New(_Args&&... __args)
     {
       typedef typename std::remove_const<_Tp>::type _Tp_nc;
       return std::allocate_shared<_Tp>(std::allocator<_Tp_nc>(),
@@ -218,78 +217,28 @@ namespace bode {
 
 	};
 
-	/*
-	class MonomialExpressionSyntax : public ExpressionSyntax
-	{
-	 public:
-		Ptr<SyntaxToken> VariableToken;
-		int Exponent = 1;
-
-	 public:
-		MonomialExpressionSyntax(Ptr<SyntaxToken> variableToken)
-		{
-			VariableToken = variableToken;
-			Kind = SyntaxKind::MonomialExpression;
-		}
-
-		virtual Ptr<vector<Ptr<SyntaxNode>>> GetChildren()
-		{
-			vector<Ptr<SyntaxNode>> _this(1);
-			_this[0] = VariableToken;
-			return New<vector<Ptr<SyntaxNode>>>(_this);
-		}
-
-	};
-
-	class PolynomialExpressionSyntax : public ExpressionSyntax
-	{
-	 public:
-		Ptr<SyntaxToken> VariableToken;
-		Ptr<SyntaxToken> OperatorToken;
-		Ptr<NumberExpressionSyntax> NumberExpression;
-
-		int Exponent;
-
-	 public:
-		PolynomialExpressionSyntax(Ptr<SyntaxToken> variableToken,Ptr<SyntaxToken> operatorToken, Ptr<NumberExpressionSyntax> numberExpression)
-		{
-			VariableToken = variableToken;
-			Exponent = 1;
-			Kind = SyntaxKind::PolynomialExpression;
-		}
-
-		virtual Ptr<vector<Ptr<SyntaxNode>>> GetChildren()
-		{
-			vector<Ptr<SyntaxNode>> _this(1);
-			_this[0] = VariableToken;
-			return New<vector<Ptr<SyntaxNode>>>(_this);
-		}
-
-	};
-	*/
-
 	class BinaryExpressionSyntax : public ExpressionSyntax
 	{
 	 public:
-		Ptr<SyntaxNode> Right;
-		Ptr<SyntaxToken> OperatorToken;
 		Ptr<SyntaxNode> Left;
+		Ptr<SyntaxToken> OperatorToken;
+		Ptr<SyntaxNode> Right;
 
 	 public:
-		BinaryExpressionSyntax(Ptr<SyntaxNode> right, Ptr<SyntaxToken> operatorToken, Ptr<SyntaxNode> left)
+		BinaryExpressionSyntax(Ptr<SyntaxNode> left, Ptr<SyntaxToken> operatorToken, Ptr<SyntaxNode> right)
 		{
-			Right = right; 
-			OperatorToken = operatorToken; 
 			Left = left;
+			OperatorToken = operatorToken; 
+			Right = right; 
 			Kind = SyntaxKind::BinaryExpression;
 		}
 
 		virtual Ptr<vector<Ptr<SyntaxNode>>> GetChildren()
 		{
 			vector<Ptr<SyntaxNode>> _this(3);
-			_this[0] = Right;
+			_this[0] = Left;
 			_this[1] = OperatorToken;
-			_this[2] = Left;
+			_this[2] = Right;
 			return New<vector<Ptr<SyntaxNode>>>(_this);
 		}
 
@@ -355,7 +304,6 @@ namespace bode {
 		{
 			Diagnistics = New<vector<string>>();
 		}
-		
 		~ErrorReporter()
 		{
 		}
@@ -366,7 +314,7 @@ namespace bode {
 			ss 
 				<< "Unexpected character <" 
 				<< c << "> "
-				<< "at position <" << position << ">.";
+				<< "at position <" << position+1 << ">.";
 			
 			Report(ss.str());
 		}
@@ -379,7 +327,7 @@ namespace bode {
 				<< ToString(current) << ">, "
 				<< "expected <"
 				<< ToString(expected) << "> "
-				<< "at position <" << position << ">.";
+				<< "at position <" << position+1 << ">.";
 			
 			Report(ss.str());
 		}
@@ -687,7 +635,7 @@ namespace bode {
 			}
 			else if (node->Kind == SyntaxKind::VariableExpression)
 			{
-				return complex<double>((double)s, 0.0);
+				return complex<double>(0, (double)s);
 			}
 			else if (node->Kind == SyntaxKind::ImmVariableExpression)
 			{
@@ -729,6 +677,8 @@ namespace bode {
 		_notLast[] = { (char)195, (char)196, (char)196, ' ', 0 },
 		_notLastI[] = { (char)179, ' ', ' ', ' ', 0 };
 	
+	Evaluator eval;
+
 	void PrintNode(Ptr<SyntaxNode> node, string indent = "", bool isLast = true)
 	{
 		cout << indent;
@@ -754,13 +704,168 @@ namespace bode {
 			PrintNode(children->at(i), indent, i == lastI);
 	}
 
-	
-	typedef long long ll;
+	void PrintNodeV(Ptr<SyntaxNode> node, string indent = "", bool isLast = true)
+	{
+		cout << indent;
+		const string& marker = isLast ? _last : _notLast;
 
-	ll pow_ (const int& n, const int& e) {
-		ll res = 1LL;
-		for (int i = 0; i < e; i++)
-			res *= n;
-		return res;
+		cout << marker
+				 << ToString(node->Kind)
+				 << ' ' << eval.Evaluate(node, 1);
+
+		if (Ptr<SyntaxToken> token = dynamic_pointer_cast<SyntaxToken>(node))
+		{
+			if (token->Kind == SyntaxKind::LiteralToken)
+				cout << " " << token->Value;
+		}
+		cout << "\n";
+		
+		const auto& children = node->GetChildren();
+		if(children->size() == 0)
+			return;
+
+		indent += isLast ? "    ":_notLastI;
+		const auto& lastI = children->size() - 1;
+		for (int i = 0; i < children->size(); i++)
+			PrintNodeV(children->at(i), indent, i == lastI);
 	}
+
+}
+
+typedef long long ll;
+ll pow_ (const int& n, const int& e) {
+	ll res = 1LL;
+	for (int i = 0; i < e; i++)
+		res *= n;
+	return res;
+}
+
+#define round(x) ((double)((int)((double)x + 0.5)))
+
+std::string toArray(std::vector<double> v) {
+	std::stringstream ss;
+	ss << "[";
+	for (int i = 0; i < v.size(); i++) {
+		ss << v[i];
+		if (i != v.size() - 1)
+			ss << ',';
+		else 
+			ss << "]";
+	}
+	return ss.str();
+}
+
+std::string toStringArray(bode::Ptr<std::vector<std::string>> v) {
+	std::stringstream ss;
+	ss << "[";
+	for (int i = 0; i < v->size(); i++) {
+		ss << '"' << v->at(i) << '"';
+		if (i != v->size() - 1)
+			ss << ',';
+		else 
+			ss << ']';
+	}
+	return ss.str();
+}
+
+void GenetatePlots(std::string text, std::string mR, std::string mA, std::string pR);
+
+void PrintJsError(std::string vecS);
+
+void CalculatePlot(std::string text)
+{
+	using namespace bode;
+  using namespace std;
+
+	Parser parser(text);
+	auto syntaxTree = parser.Parse();
+
+	const auto& diagnostics = parser._reporter->Diagnistics;
+	// PrintNode(syntaxTree->Root);
+
+	if (!diagnostics->size())
+	{
+		Evaluator evaluator;
+		const auto& root = syntaxTree->Root;
+
+		vector<double> moduleReal;
+		vector<double> phaseReal;
+
+		vector<double> moduleAs;
+
+		Ptr<BinaryExpressionSyntax> b = dynamic_pointer_cast<BinaryExpressionSyntax>(root);
+		
+		if (b && b->OperatorToken->Kind == SyntaxKind::SlashToken)
+		{
+			auto num = evaluator.Evaluate(b->Left, 1);
+			auto den = evaluator.Evaluate(b->Right, 1);
+
+			for (int i = 0; i < 10; i++) {
+				num = evaluator.Evaluate(b->Left, pow_(10, i));
+				den = evaluator.Evaluate(b->Right, pow_(10, i));
+
+				num *= conj(den);
+				den *= conj(den);
+
+				const auto& c = num / den; 
+				
+				const auto& module = 20*log10(abs(c));
+				
+				moduleReal.push_back(module);
+				moduleAs.push_back(round(module));
+				phaseReal.push_back(
+					-atan(c.imag() / c.real()) );
+			}
+
+		}
+		else 
+		{
+			for (int i = 0; i < 10; i++) {
+				const auto& c = evaluator.Evaluate(root, pow_(10, i)); 
+				moduleReal.push_back(
+					log10(abs(c)) );
+				phaseReal.push_back(
+					-atan(c.imag() / c.real()) );
+			}
+
+		}
+
+		// for (auto& e : moduleReal)
+		// 	cout << e << ' ';
+		// cout << '\n';
+		// for (auto& e : moduleAs)
+		// 	cout << e << ' ';
+		// cout << '\n';
+		// for (auto& e : phaseReal)
+		// 	cout << e << ' ';
+		// cout << '\n';
+
+		GenetatePlots(text, toArray(moduleReal), toArray(moduleAs), toArray(phaseReal));
+	}
+	else
+	{
+		// for (const auto& d : (*diagnostics))
+		// 	cout << d << "\n";
+
+		PrintJsError(toStringArray(diagnostics));
+	}
+}
+
+void run() {
+	using namespace bode;
+	using namespace std;
+
+	while (true)
+	{
+		string text;
+		cout << "> ";
+		getline(cin, text);
+
+		if (text.size() == 0)
+			break;
+
+		CalculatePlot(text);
+		
+	}
+
 }

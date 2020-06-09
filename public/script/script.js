@@ -129,9 +129,7 @@
 	}
 
 	function GenerateCalculatedPlotListeners(moduleData, phaseData) {
-		
-		console.log(moduleData, phaseData);
-		
+		//console.log(moduleData, phaseData);
 		const wrapper = document.querySelector('.button-wrapper');
 		wrapper.innerHTML = '';
 
@@ -158,6 +156,15 @@
 		phaseB.className += notActiveStyle;
 
 		const _labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+		
+		(function() {
+			const e = document.getElementById('plot-container');
+			e.innerHTML = '';
+			const canvas = document.createElement('canvas');
+			canvas.id = 'plot-c';
+			canvas.className = 'h-64';
+			e.appendChild(canvas);
+		}());
 
 		const chart = new Chart(document.querySelector('#plot-c').getContext('2d'), {
 			type: 'line',
@@ -169,7 +176,7 @@
 						data: moduleData,
 						fill: false,
 						borderColor: 'rgb(54, 162, 235)',
-						lineTension: 1
+						lineTension: 0.5
 					}
 				]
 			},
@@ -227,7 +234,7 @@
 	/***********************************************************************************************
 	 * Entry point
 	 */
-	document.addEventListener('DOMContentLoaded', () => {
+	document.addEventListener('DOMContentLoaded', async () => {
 		console.log('DOMContentLoaded');
 		const errorList = document.querySelector('#error-list');
 		window.errorList = errorList;
@@ -491,6 +498,15 @@
 
 		// activating all listeners
 		generateListeners();
+		
+		// serviceWorker
+		if ('serviceWorker' in navigator) {
+			try {
+				await navigator.serviceWorker.register('./sw.js');
+			} catch (e) {
+				console.log(`SW registration failed`);
+			}
+		}
 
 	});
 }());
