@@ -165,8 +165,10 @@
 			canvas.className = 'h-64';
 			e.appendChild(canvas);
 		}());
+		
+		const drawingCanvas = document.querySelector('#plot-c');
 
-		const chart = new Chart(document.querySelector('#plot-c').getContext('2d'), {
+		const chart = new Chart(drawingCanvas.getContext('2d'), {
 			type: 'line',
 			data: {
 				labels: _labels,
@@ -176,7 +178,7 @@
 						data: moduleData,
 						fill: false,
 						borderColor: 'rgb(54, 162, 235)',
-						lineTension: 0.5
+						lineTension: 0.2
 					}
 				]
 			},
@@ -217,11 +219,6 @@
 			chart.update();
 		});
 		
-		// download
-		const downloadButton = document.querySelector('#download-button');
-		downloadButton.addEventListener('click', () => {
-
-		});
 	}
 	window.GenerateCalculatedPlotListeners = GenerateCalculatedPlotListeners;
 

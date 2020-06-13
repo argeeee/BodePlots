@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -733,7 +732,8 @@ namespace bode {
 }
 
 typedef long long ll;
-ll pow_ (const int& n, const int& e) {
+ll pow_ (const int& n, const int& e)
+{
 	ll res = 1LL;
 	for (int i = 0; i < e; i++)
 		res *= n;
@@ -790,8 +790,7 @@ void CalculatePlot(std::string text)
 
 		vector<double> moduleReal;
 		vector<double> phaseReal;
-
-		vector<double> moduleAs;
+		// vector<double> moduleAs;
 
 		Ptr<BinaryExpressionSyntax> b = dynamic_pointer_cast<BinaryExpressionSyntax>(root);
 		
@@ -808,11 +807,10 @@ void CalculatePlot(std::string text)
 				den *= conj(den);
 
 				const auto& c = num / den; 
-				
 				const auto& module = 20*log10(abs(c));
 				
 				moduleReal.push_back(module);
-				moduleAs.push_back(round(module));
+				// moduleAs.push_back(round(module));
 				phaseReal.push_back(
 					-atan(c.imag() / c.real()) );
 			}
@@ -823,7 +821,7 @@ void CalculatePlot(std::string text)
 			for (int i = 0; i < 10; i++) {
 				const auto& c = evaluator.Evaluate(root, pow_(10, i)); 
 				moduleReal.push_back(
-					log10(abs(c)) );
+					20*log10(abs(c)) );
 				phaseReal.push_back(
 					-atan(c.imag() / c.real()) );
 			}
@@ -840,7 +838,7 @@ void CalculatePlot(std::string text)
 		// 	cout << e << ' ';
 		// cout << '\n';
 
-		GenetatePlots(text, toArray(moduleReal), toArray(moduleAs), toArray(phaseReal));
+		GenetatePlots(text, toArray(moduleReal), toArray(moduleReal)/*Asymptotic*/, toArray(phaseReal));
 	}
 	else
 	{
